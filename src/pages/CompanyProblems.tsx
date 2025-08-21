@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Container from "@/components/ui/Container";
 import { Progress } from "@/components/ui/progress";
 import { companies } from "@/data/companyProblems";
+import FeedbackModal from "@/components/course/FeedbackModal";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -14,8 +15,19 @@ const CompanyProblems = () => {
   const company = companies.find(c => c.id === companyId);
   
   const [completedProblems, setCompletedProblems] = useState(new Set<string>());
+  const [feedbackModal, setFeedbackModal] = useState<{
+    isOpen: boolean;
+    problemName: string;
+    difficulty: 'Easy' | 'Medium' | 'Hard';
+  }>({
+    isOpen: false,
+    problemName: "",
+    difficulty: "Easy"
+  });
 
-  const toggleProblem = useCallback((problemName: string) => {
+  const toggleProblem = useCallback((problemName: string, difficulty: 'Easy' | 'Medium' | 'Hard') => {
+    const isCurrentlyCompleted = completedProblems.has(problemName);
+    
     setCompletedProblems(prev => {
       const newSet = new Set(prev);
       if (newSet.has(problemName)) {
@@ -25,7 +37,16 @@ const CompanyProblems = () => {
       }
       return newSet;
     });
-  }, []);
+
+    // Show feedback modal when marking as completed (not when unchecking)
+    if (!isCurrentlyCompleted) {
+      setFeedbackModal({
+        isOpen: true,
+        problemName,
+        difficulty
+      });
+    }
+  }, [completedProblems]);
 
   if (!company) {
     return (
@@ -118,7 +139,7 @@ const CompanyProblems = () => {
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <Checkbox
                           checked={isCompleted}
-                          onCheckedChange={() => toggleProblem(problem.name)}
+                          onCheckedChange={() => toggleProblem(problem.name, problem.difficulty)}
                           className="flex-shrink-0"
                         />
                         
@@ -178,6 +199,15 @@ const CompanyProblems = () => {
               </Button>
             </Link>
           </div>
+
+          {/* Feedback Modal */}
+          <FeedbackModal
+            isOpen={feedbackModal.isOpen}
+            onClose={() => setFeedbackModal(prev => ({ ...prev, isOpen: false }))}
+            problemName={feedbackModal.problemName}
+            difficulty={feedbackModal.difficulty}
+            company={company.title}
+          />
         </div>
       </Container>
     </div>

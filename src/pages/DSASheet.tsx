@@ -4,13 +4,33 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Building2, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChevronRight, Building2, BookOpen, Search, Filter } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { dsaTopics } from "@/data/dsaProblems";
 import { companies } from "@/data/companyProblems";
 
 const DSASheet = () => {
   const [activeTab, setActiveTab] = useState("topics");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [difficultyFilter, setDifficultyFilter] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Filter companies based on search and difficulty
+  const filteredCompanies = companies.filter(company => {
+    const matchesSearch = company.title.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (difficultyFilter === "all") return matchesSearch;
+    
+    // Check if company has problems of the selected difficulty
+    const hasMatchingDifficulty = company.problems.some(problem => 
+      problem.difficulty.toLowerCase() === difficultyFilter.toLowerCase()
+    );
+    
+    return matchesSearch && hasMatchingDifficulty;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -79,9 +99,60 @@ const DSASheet = () => {
             </TabsContent>
 
             <TabsContent value="companies" className="mt-8">
+              {/* Filters for Companies */}
+              <div className="mb-8 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-semibold">Company Problems</h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="gap-2"
+                  >
+                    <Filter className="w-4 h-4" />
+                    Filters
+                  </Button>
+                </div>
+                
+                {showFilters && (
+                  <Card className="p-4 bg-muted/30">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Search Companies</label>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search by company name..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-10"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Filter by Difficulty</label>
+                        <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Difficulties</SelectItem>
+                            <SelectItem value="easy">Easy</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="hard">Hard</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+              </div>
+
               {/* Companies Grid */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {companies.map((company, index) => (
+                {filteredCompanies.length > 0 ? (
+                  filteredCompanies.map((company, index) => (
                   <Link key={company.id} to={`/dsa-sheet/company/${company.id}`}>
                     <Card className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/20 bg-card/50 backdrop-blur-sm">
                       <CardContent className="p-6">
@@ -112,7 +183,16 @@ const DSASheet = () => {
                       </CardContent>
                     </Card>
                   </Link>
-                ))}
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <div className="text-muted-foreground">
+                      <Building2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p className="text-lg">No companies found</p>
+                      <p className="text-sm">Try adjusting your search or filters</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
@@ -148,21 +228,21 @@ const DSASheet = () => {
                   <div className="flex items-center gap-8">
                     <div>
                       <div className="text-3xl font-bold text-primary">
-                        {companies.reduce((acc, company) => acc + company.totalProblems, 0)}
+                        {filteredCompanies.reduce((acc, company) => acc + company.totalProblems, 0)}
                       </div>
                       <div className="text-sm text-muted-foreground">Total Problems</div>
                     </div>
                     <div className="w-px h-12 bg-border"></div>
                     <div>
                       <div className="text-3xl font-bold text-secondary">
-                        {companies.reduce((acc, company) => acc + company.solvedProblems, 0)}
+                        {filteredCompanies.reduce((acc, company) => acc + company.solvedProblems, 0)}
                       </div>
                       <div className="text-sm text-muted-foreground">Solved</div>
                     </div>
                     <div className="w-px h-12 bg-border"></div>
                     <div>
                       <div className="text-3xl font-bold text-accent">
-                        {companies.length}
+                        {filteredCompanies.length}
                       </div>
                       <div className="text-sm text-muted-foreground">Companies</div>
                     </div>
