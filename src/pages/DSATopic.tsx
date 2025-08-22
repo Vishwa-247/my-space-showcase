@@ -4,14 +4,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import Container from "@/components/ui/Container";
 import { Progress } from "@/components/ui/progress";
 import { dsaTopics } from "@/data/dsaProblems";
+import InlineFeedback from "@/components/course/InlineFeedback";
 import { CheckCircle2, ChevronLeft, Circle, ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 const DSATopic = () => {
   const { topicId } = useParams();
   const topic = dsaTopics.find(t => t.id === topicId);
   const [completedProblems, setCompletedProblems] = useState<Set<string>>(new Set());
+  const [expandedFeedback, setExpandedFeedback] = useState<string | null>(null);
 
   if (!topic) {
     return (
@@ -26,15 +28,24 @@ const DSATopic = () => {
     );
   }
 
-  const toggleProblem = (problemName: string) => {
-    const newCompleted = new Set(completedProblems);
-    if (newCompleted.has(problemName)) {
-      newCompleted.delete(problemName);
-    } else {
-      newCompleted.add(problemName);
+  const toggleProblem = useCallback((problemName: string) => {
+    const isCurrentlyCompleted = completedProblems.has(problemName);
+    
+    setCompletedProblems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(problemName)) {
+        newSet.delete(problemName);
+      } else {
+        newSet.add(problemName);
+      }
+      return newSet;
+    });
+
+    // Show feedback form when marking as completed (not when unchecking)
+    if (!isCurrentlyCompleted) {
+      setExpandedFeedback(problemName);
     }
-    setCompletedProblems(newCompleted);
-  };
+  }, [completedProblems]);
 
   const progressPercentage = (completedProblems.size / topic.problems.length) * 100;
 
@@ -127,12 +138,26 @@ const DSATopic = () => {
                           <ExternalLink className="w-4 h-4" />
                         </a>
                       </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                     </div>
+
+                     {/* Inline Feedback */}
+                     {isCompleted && (
+                       <div className="mt-4">
+                         <InlineFeedback
+                           isExpanded={expandedFeedback === problem.name}
+                           onToggle={() => setExpandedFeedback(expandedFeedback === problem.name ? null : problem.name)}
+                           problemName={problem.name}
+                           difficulty={problem.difficulty || "Medium"}
+                           company={topic.title}
+                           onSubmit={() => setExpandedFeedback(null)}
+                         />
+                       </div>
+                     )}
+                   </CardContent>
+                 </Card>
+               );
+             })}
+           </div>
 
           {/* Back Button */}
           <div className="mt-12 text-center">

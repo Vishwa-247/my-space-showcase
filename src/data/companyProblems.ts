@@ -25,7 +25,7 @@ export const companies: Company[] = [
       { label: "Careers", url: "https://www.adobe.com/careers.html" },
       { label: "LeetCode Discuss", url: "https://leetcode.com/company/adobe/" },
     ],
-    totalProblems: 59,
+    totalProblems: 52,
     solvedProblems: 0,
     problems: [
       {
@@ -341,7 +341,7 @@ export const companies: Company[] = [
         url: "https://leetcode.com/company/citadel/",
       },
     ],
-    totalProblems: 40,
+    totalProblems: 32,
     solvedProblems: 0,
     problems: [
       {

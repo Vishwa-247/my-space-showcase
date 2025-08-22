@@ -1,6 +1,7 @@
 export interface DSAProblem {
   name: string;
   url: string;
+  difficulty?: 'Easy' | 'Medium' | 'Hard';
   completed?: boolean;
 }
 
@@ -21,11 +22,11 @@ export const dsaTopics: DSATopic[] = [
     totalProblems: 32,
     solvedProblems: 0,
     problems: [
-      { name: "Reverse String", url: "https://leetcode.com/problems/reverse-string" },
-      { name: "Valid Palindrome", url: "https://leetcode.com/problems/valid-palindrome" },
-      { name: "Length of Last Word", url: "https://leetcode.com/problems/length-of-last-word/" },
-      { name: "Find the Index of the First Occurrence in a String", url: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" },
-      { name: "Longest Substring Without Repeating Characters", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters" },
+      { name: "Reverse String", url: "https://leetcode.com/problems/reverse-string", difficulty: "Easy" },
+      { name: "Valid Palindrome", url: "https://leetcode.com/problems/valid-palindrome", difficulty: "Easy" },
+      { name: "Length of Last Word", url: "https://leetcode.com/problems/length-of-last-word/", difficulty: "Easy" },
+      { name: "Find the Index of the First Occurrence in a String", url: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/", difficulty: "Easy" },
+      { name: "Longest Substring Without Repeating Characters", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters", difficulty: "Medium" },
       { name: "String to Integer (atoi)", url: "https://leetcode.com/problems/string-to-integer-atoi" },
       { name: "Valid Parentheses", url: "https://leetcode.com/problems/valid-parentheses" },
       { name: "Reverse Words in a String", url: "https://leetcode.com/problems/reverse-words-in-a-string" },
