@@ -11,6 +11,7 @@ import { ChevronRight, Building2, BookOpen, Search, Filter } from "lucide-react"
 import Container from "@/components/ui/Container";
 import { dsaTopics } from "@/data/dsaProblems";
 import { companies } from "@/data/companyProblems";
+import InlineFeedback from "@/components/course/InlineFeedback";
 
 const DSASheet = () => {
   const [activeTab, setActiveTab] = useState("topics");

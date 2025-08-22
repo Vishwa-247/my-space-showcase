@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Container from "@/components/ui/Container";
 import { Progress } from "@/components/ui/progress";
 import { companies } from "@/data/companyProblems";
-import FeedbackModal from "@/components/course/FeedbackModal";
+import InlineFeedback from "@/components/course/InlineFeedback";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -15,15 +15,7 @@ const CompanyProblems = () => {
   const company = companies.find(c => c.id === companyId);
   
   const [completedProblems, setCompletedProblems] = useState(new Set<string>());
-  const [feedbackModal, setFeedbackModal] = useState<{
-    isOpen: boolean;
-    problemName: string;
-    difficulty: 'Easy' | 'Medium' | 'Hard';
-  }>({
-    isOpen: false,
-    problemName: "",
-    difficulty: "Easy"
-  });
+  const [expandedFeedback, setExpandedFeedback] = useState<string | null>(null);
 
   const toggleProblem = useCallback((problemName: string, difficulty: 'Easy' | 'Medium' | 'Hard') => {
     const isCurrentlyCompleted = completedProblems.has(problemName);
@@ -38,13 +30,9 @@ const CompanyProblems = () => {
       return newSet;
     });
 
-    // Show feedback modal when marking as completed (not when unchecking)
+    // Show feedback form when marking as completed (not when unchecking)
     if (!isCurrentlyCompleted) {
-      setFeedbackModal({
-        isOpen: true,
-        problemName,
-        difficulty
-      });
+      setExpandedFeedback(problemName);
     }
   }, [completedProblems]);
 
@@ -183,31 +171,36 @@ const CompanyProblems = () => {
                           </a>
                         </Button>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                     </div>
 
-          {/* Back Button */}
-          <div className="mt-12 text-center">
-            <Link to="/dsa-sheet">
-              <Button variant="outline" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Back to DSA Sheet
-              </Button>
-            </Link>
-          </div>
+                     {/* Inline Feedback */}
+                     {isCompleted && (
+                       <div className="mt-4">
+                         <InlineFeedback
+                           isExpanded={expandedFeedback === problem.name}
+                           onToggle={() => setExpandedFeedback(expandedFeedback === problem.name ? null : problem.name)}
+                           problemName={problem.name}
+                           difficulty={problem.difficulty}
+                           company={company.title}
+                           onSubmit={() => setExpandedFeedback(null)}
+                         />
+                       </div>
+                     )}
+                   </CardContent>
+                 </Card>
+               );
+             })}
+           </div>
 
-          {/* Feedback Modal */}
-          <FeedbackModal
-            isOpen={feedbackModal.isOpen}
-            onClose={() => setFeedbackModal(prev => ({ ...prev, isOpen: false }))}
-            problemName={feedbackModal.problemName}
-            difficulty={feedbackModal.difficulty}
-            company={company.title}
-          />
+           {/* Back Button */}
+           <div className="mt-12 text-center">
+             <Link to="/dsa-sheet">
+               <Button variant="outline" className="gap-2">
+                 <ArrowLeft className="w-4 h-4" />
+                 Back to DSA Sheet
+               </Button>
+             </Link>
+           </div>
         </div>
       </Container>
     </div>

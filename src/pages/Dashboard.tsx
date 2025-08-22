@@ -90,7 +90,7 @@ const Dashboard = () => {
               <Link to="/course-generator">Create Course</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link to="/mock-interview">Start Interview</Link>
+              <Link to="/mock-interview">AI Interview Coach</Link>
             </Button>
             <Button 
               variant="outline" 
@@ -122,7 +122,7 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -140,7 +140,7 @@ const Dashboard = () => {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Practice Interviews
+                    AI Interviews
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -154,13 +154,27 @@ const Dashboard = () => {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Average Score
+                    Profile Strength
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center">
                     <Medal className="mr-2 h-4 w-4 text-primary" />
-                    <div className="text-2xl font-bold">78%</div>
+                    <div className="text-2xl font-bold">85%</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Weekly Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center">
+                    <AlertCircle className="mr-2 h-4 w-4 text-primary" />
+                    <div className="text-2xl font-bold">↗ 23%</div>
                   </div>
                 </CardContent>
               </Card>
@@ -229,9 +243,9 @@ const Dashboard = () => {
                           </div>
                         </div>
                       ))}
-                      <Button variant="outline" size="sm" className="w-full" asChild>
+                       <Button variant="outline" size="sm" className="w-full" asChild>
                         <Link to="/dashboard?tab=interviews" onClick={() => setActiveTab("interviews")}>
-                          View All Interviews
+                          View All AI Interviews
                         </Link>
                       </Button>
                     </div>
@@ -328,15 +342,27 @@ const Dashboard = () => {
               
               <Card className="border-dashed border-2 flex flex-col items-center justify-center p-6">
                 <Video className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Start New Interview</h3>
+                <h3 className="text-lg font-medium mb-2">AI Interview Agents</h3>
                 <p className="text-sm text-muted-foreground text-center mb-4">
-                  Practice with our AI-powered interview simulator
+                  Choose from HR, Technical, or Aptitude interview coaches
                 </p>
-                <Button asChild>
-                  <Link to="/mock-interview">
-                    Begin Practice <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
+                <div className="space-y-2 w-full">
+                  <Button asChild size="sm" className="w-full">
+                    <Link to="/mock-interview?type=technical">
+                      Technical Interview
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm" variant="outline" className="w-full">
+                    <Link to="/mock-interview?type=hr">
+                      HR Interview
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm" variant="outline" className="w-full">
+                    <Link to="/mock-interview?type=aptitude">
+                      Aptitude Test
+                    </Link>
+                  </Button>
+                </div>
               </Card>
             </div>
           </TabsContent>

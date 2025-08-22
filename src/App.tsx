@@ -18,6 +18,7 @@ import CompanyProblems from "./pages/CompanyProblems";
 import InterviewResult from "./pages/InterviewResult";
 import FutureIntegrations from "./pages/FutureIntegrations";
 import Auth from "./pages/Auth";
+import ProfileBuilder from "./pages/ProfileBuilder";
 import { AuthProvider } from "./context/AuthContext";
 import { InterviewProvider } from "./context/InterviewContext";
 
@@ -40,6 +41,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/profile-builder" element={<Layout><ProfileBuilder /></Layout>} />
             <Route path="/courses" element={<Layout><Courses /></Layout>} />
             <Route path="/dsa-sheet" element={<Layout><DSASheet /></Layout>} />
             <Route path="/dsa-sheet/topic/:topicId" element={<Layout><DSATopic /></Layout>} />

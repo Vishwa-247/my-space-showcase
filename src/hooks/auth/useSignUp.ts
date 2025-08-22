@@ -39,7 +39,7 @@ export const useSignUp = () => {
         description: `Welcome to StudyMate, ${demoUser.user_metadata.full_name}!`
       });
       
-      navigate('/dashboard');
+      navigate('/profile-builder');
     } catch (error: any) {
       console.error("Error in demo sign up:", error);
       toast({
