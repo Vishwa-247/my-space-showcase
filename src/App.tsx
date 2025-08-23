@@ -58,8 +58,6 @@ const App = () => (
             } />
             <Route path="/interview-result/:id" element={<Layout><InterviewResult /></Layout>} />
             <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
-            {/* API proxy route for future Flask integration */}
-            <Route path="/api/*" element={<div>API Proxy</div>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

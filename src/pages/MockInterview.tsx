@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import InterviewSetup from "@/components/interview/InterviewSetup";
+import InterviewTypeSelection, { InterviewType } from "@/components/interview/InterviewTypeSelection";
 import VideoRecorder from "@/components/interview/VideoRecorder";
 import Container from "@/components/ui/Container";
 import { ChevronLeft, ChevronRight, Download, Loader2 } from "lucide-react";
@@ -78,6 +79,7 @@ const staticQuestions = {
 };
 
 enum InterviewStage {
+  TypeSelection = "type-selection",
   Setup = "setup",
   Questions = "questions",
   Recording = "recording",
@@ -88,7 +90,8 @@ const MockInterview = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [stage, setStage] = useState<InterviewStage>(InterviewStage.Setup);
+  const [stage, setStage] = useState<InterviewStage>(InterviewStage.TypeSelection);
+  const [selectedInterviewType, setSelectedInterviewType] = useState<InterviewType | null>(null);
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isCourseTabActive, setCourseTabActive] = useState(false);
@@ -240,8 +243,20 @@ const MockInterview = () => {
     setStage(InterviewStage.Questions);
   };
 
+  const handleTypeSelection = (type: InterviewType) => {
+    setSelectedInterviewType(type);
+    setStage(InterviewStage.Setup);
+    toast({
+      title: "Interview Type Selected",
+      description: `You've chosen ${type.replace('-', ' ')} interview.`,
+    });
+  };
+
   const renderStage = () => {
     switch (stage) {
+      case InterviewStage.TypeSelection:
+        return <InterviewTypeSelection onTypeSelect={handleTypeSelection} />;
+      
       case InterviewStage.Questions:
         if (questions.length === 0) {
           return (
@@ -258,11 +273,11 @@ const MockInterview = () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => setStage(InterviewStage.Setup)}
+                  onClick={() => setStage(InterviewStage.TypeSelection)}
                   className="text-muted-foreground"
                 >
                   <ChevronLeft className="mr-2 h-4 w-4" />
-                  Cancel Interview
+                  Change Interview Type
                 </Button>
                 
                 <span className="text-sm text-muted-foreground">
