@@ -7,11 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BookOpen, FileText, Layout, Lightbulb, MessageSquare, ChevronLeft, CheckCircle2 } from "lucide-react";
+import { BookOpen, FileText, Clock, Users, ChevronLeft, CheckCircle2, PlayCircle, Layout, MessageSquare, Lightbulb } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { useToast } from "@/hooks/use-toast";
 import { ChapterType, CourseType, FlashcardType, McqType, QnaType } from "@/types";
-import NotebookPanel from "@/components/course/NotebookPanel";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -639,22 +638,55 @@ Implementing these optimization techniques will help you build React application
         </TabsList>
         
         <TabsContent value="chapters" className="space-y-6">
-          {/* Two-column layout: Main content + Notebook panel */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main content - 70% width */}
-            <div className="lg:col-span-2 space-y-6">
-              {chapters.map((chapter) => (
-                <Card key={chapter.id}>
-                  <CardHeader>
-                    <CardTitle className="flex items-start">
-                      <span className="text-muted-foreground mr-4">
-                        {String(chapter.order_number).padStart(2, '0')}
-                      </span>
-                      {chapter.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="prose dark:prose-invert max-w-none">
+          {/* Coursera-style header with course metadata */}
+          <div className="mb-8 p-6 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent rounded-lg border">
+            <div className="flex flex-wrap items-center gap-4 mb-4">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span>~45 min read time</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span>12,847 learners</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <BookOpen className="h-4 w-4" />
+                <span>{chapters.length} chapters</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button className="flex items-center gap-2">
+                <PlayCircle className="h-4 w-4" />
+                Start Learning
+              </Button>
+              <Button variant="outline">Download Materials</Button>
+            </div>
+          </div>
+
+          {/* Course Content - Full Width Coursera Style */}
+          <div className="max-w-4xl mx-auto space-y-8">
+            {chapters.map((chapter, index) => (
+              <div key={chapter.id} className="group">
+                {/* Chapter Header */}
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold text-sm">
+                    {chapter.order_number}
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-xl font-bold mb-1">{chapter.title}</h2>
+                    <p className="text-sm text-muted-foreground">Chapter {chapter.order_number} of {chapters.length}</p>
+                  </div>
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button variant="ghost" size="sm">
+                      <BookOpen className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Chapter Content */}
+                <Card className="mb-8 border-l-4 border-l-primary">
+                  <CardContent className="pt-6">
+                    <div className="prose dark:prose-invert max-w-none prose-headings:scroll-mt-20">
                       <div dangerouslySetInnerHTML={{ 
                         __html: renderMarkdown(chapter.content)
                        }} 
@@ -662,18 +694,32 @@ Implementing these optimization techniques will help you build React application
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-            
-            {/* NotebookLM-style panel - 30% width */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-6">
-                <NotebookPanel 
-                  notebook={sampleNotebook}
-                  mindMap={sampleMindMap}
-                />
+
+                {/* Progress indicator */}
+                {index < chapters.length - 1 && (
+                  <div className="flex justify-center my-8">
+                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-border to-transparent"></div>
+                  </div>
+                )}
               </div>
-            </div>
+            ))}
+
+            {/* Course completion card */}
+            <Card className="mt-12 text-center p-8 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+              <CheckCircle2 className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2">Ready for the next step?</h3>
+              <p className="text-muted-foreground mb-6">
+                Continue your learning journey with flashcards and practice questions.
+              </p>
+              <div className="flex gap-3 justify-center">
+                <Button onClick={() => setActiveTab("flashcards")}>
+                  Review Flashcards
+                </Button>
+                <Button variant="outline" onClick={() => setActiveTab("mcq")}>
+                  Take Quiz
+                </Button>
+              </div>
+            </Card>
           </div>
         </TabsContent>
         
